@@ -1,76 +1,36 @@
 <!DOCTYPE html>
-<html lang="en" class="transition-colors duration-300">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener | jaimin.web</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0ea5e9',      
-                        primaryDark: '#0284c7', 
-                        darkBg: '#0f172a',       
-                        darkCard: '#1e293b',     
-                        darkBorder: '#334155',
-                        tealAccent: '#0d9488'    
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { transition: background-color 0.3s ease, color 0.3s ease; }
-        .drawer-transition { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .delay-100 { transition-delay: 100ms; }
-    </style>
+    <title>URL Shortener - jaimin.web</title>
+    <link rel="icon" href="images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-100 h-screen flex flex-col font-sans overflow-hidden">
+<body>
 
-    <!-- OVERLAY: Redirecting Screen (Jab koi short link se aayega tab ye dikhega) -->
-    <div id="redirect-overlay" class="fixed inset-0 bg-gray-50 dark:bg-darkBg z-[100] hidden flex-col items-center justify-center">
-        <div id="redirect-spinner" class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-primary mb-4"></div>
-        <h2 id="redirect-msg" class="text-xl font-bold text-gray-800 dark:text-white">Fetching your link...</h2>
+    <!--Redirecting Screen -->
+    <div id="redirect-overlay" class="hidden">
+        <div id="redirect-spinner" class="redirect-spinner animate-spin"></div>
+        <h2 id="redirect-msg">Fetching your link...</h2>
     </div>
 
     <!-- MAIN APP WRAPPER -->
-    <div id="main-app" class="flex flex-col h-full w-full">
+    <div id="main-app">
         <!-- Header -->
-        <header class="bg-white/80 dark:bg-darkCard/80 backdrop-blur-md shadow-sm dark:shadow-black/20 border-b border-gray-200 dark:border-darkBorder sticky top-0 z-50 transition-colors">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <a href="#home" class="flex-shrink-0 flex items-center gap-2 group">
-                        <svg class="w-8 h-8 text-primary dark:text-tealAccent transition-transform duration-300 group-hover:scale-105" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                        <span class="font-bold text-xl tracking-tight">ShortLink</span>
+        <header>
+            <div class="header-container">
+                <div class="header-inner">
+                    <a href="#home" class="brand-logo">
+                        <svg class="brand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        <span class="brand-text">ShortLink</span>
                     </a>
-                    <div class="hidden md:flex items-center space-x-8">
-                        <nav class="flex space-x-6 font-medium">
-                            <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-tealAccent transition-colors">Home</a>
-                        </nav>
-                        <button id="theme-toggle" class="relative w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors ring-2 ring-transparent focus:ring-primary outline-none shadow-inner">
-                            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
-                            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                        </button>
-                    </div>
-                    <div class="md:hidden flex items-center gap-3">
-                        <button id="mobile-theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                            <svg class="w-5 h-5 text-gray-700 dark:text-yellow-400" id="mobile-theme-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                        </button>
-                        <button id="menu-btn" class="p-2 text-gray-600 dark:text-gray-300 focus:outline-none rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    <nav class="desktop-nav">
+                        <a href="#home" class="nav-link">Home</a>
+                    </nav>
+                    <div class="mobile-menu-wrapper">
+                        <button id="menu-btn" aria-label="Open Menu">
+                            <svg class="w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         </button>
                     </div>
                 </div>
@@ -78,58 +38,60 @@
         </header>
 
         <!-- Navigation Drawer (Mobile) -->
-        <div id="drawer" class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-darkCard shadow-2xl dark:border-r dark:border-darkBorder transform -translate-x-full drawer-transition z-[60] md:hidden flex flex-col">
-            <div class="p-5 border-b border-gray-100 dark:border-darkBorder flex justify-between items-center">
-                <span class="font-bold text-lg flex items-center gap-2">
-                    <svg class="w-6 h-6 text-primary dark:text-tealAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+        <div id="drawer">
+            <div class="drawer-header">
+                <span class="drawer-title">
+                    <svg class="w-6 hero-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                     Menu
                 </span>
-                <button id="close-drawer" class="text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 rounded-lg transition-colors focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <button id="close-drawer" aria-label="Close Menu">
+                    <svg class="w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <nav class="flex flex-col p-5 space-y-4 font-medium">
-                <a href="#home" class="mobile-link text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-tealAccent flex items-center gap-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <nav class="drawer-nav">
+                <a href="#home" class="mobile-link">
+                    <svg class="w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     Home
                 </a>
             </nav>
         </div>
-        <div id="drawer-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-[50] md:hidden transition-opacity"></div>
+        <div id="drawer-overlay" class="hidden"></div>
 
         <!-- MAIN HOME SECTION -->
-        <main id="home" class="flex-grow flex flex-col items-center justify-center p-6 w-full max-w-3xl mx-auto h-full">
-            <div class="text-center mb-10 w-full reveal active">
-                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white tracking-tight">
-                    Shorten Your <span class="text-primary dark:text-tealAccent">Links</span>
+        <main id="home">
+            <div class="hero-section reveal active">
+                <h1 class="hero-title">
+                    Shorten Your <span class="hero-accent">Links</span>
                 </h1>
-                <p class="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+                <p class="hero-subtitle">
                     Create clean, concise URLs in seconds. Paste your long link below and make it easily shareable.
                 </p>
             </div>
 
-            <!-- Input Form with Strict Lock -->
-            <form id="shorten-form" class="w-full relative shadow-xl dark:shadow-black/40 rounded-full flex bg-white dark:bg-darkCard p-2 border border-gray-200 dark:border-darkBorder focus-within:ring-2 ring-primary dark:ring-tealAccent transition-all reveal delay-100 active">
-                <div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
-                    <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            <!-- Input Form -->
+            <form id="shorten-form" class="reveal delay-100 active">
+                <!-- SECURITY: Honeypot field -->
+                <input type="text" id="website_url" name="website_url" class="visually-hidden" autocomplete="off" tabindex="-1">
+                
+                <div class="input-icon-wrapper">
+                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                 </div>
-                <input type="url" id="long-url" required placeholder="https://your-very-long-url.com/..." 
-                       class="w-full bg-transparent pl-12 pr-4 py-3.5 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none rounded-l-full font-medium">
-                <button type="submit" id="submit-btn" class="bg-primary hover:bg-primaryDark dark:bg-tealAccent dark:hover:bg-teal-700 text-white font-semibold py-3.5 px-6 sm:px-8 rounded-full transition-all flex items-center gap-2 whitespace-nowrap shadow-md">
+                <input type="url" id="long-url" required placeholder="Paste your long URL here..." maxlength="2048">
+                <button type="submit" id="submit-btn">
                     <span id="btn-text">Shorten</span>
-                    <svg id="loading-spinner" class="animate-spin hidden w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <svg id="loading-spinner" class="animate-spin hidden w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle style="opacity: 0.25;" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path style="opacity: 0.75;" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                 </button>
             </form>
 
-            <div id="error-message" class="hidden mt-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 py-2.5 px-5 rounded-lg text-sm font-semibold border border-red-200 dark:border-red-800/30"></div>
+            <div id="error-message" class="hidden"></div>
 
             <!-- Result Container -->
-            <div id="result-container" class="hidden w-full mt-8 bg-white dark:bg-darkCard border border-green-200 dark:border-tealAccent/30 rounded-2xl p-6 shadow-lg dark:shadow-black/20 transform transition-all">
-                <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">Your Short Link</p>
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50 dark:bg-darkBg p-4 rounded-xl border border-gray-100 dark:border-darkBorder">
-                    <a href="#" id="short-url-link" target="_blank" class="text-primary dark:text-tealAccent font-bold truncate w-full sm:w-auto text-lg hover:underline"></a>
-                    <button id="copy-btn" class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 px-5 py-2.5 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" id="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            <div id="result-container" class="hidden">
+                <p class="result-label">Your Short Link</p>
+                <div class="result-box">
+                    <a href="#" id="short-url-link" target="_blank" rel="noopener noreferrer"></a>
+                    <button id="copy-btn">
+                        <svg class="w-5" id="copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                         <span id="copy-text">Copy</span>
                     </button>
                 </div>
@@ -137,196 +99,12 @@
         </main>
 
         <!-- Footer -->
-        <footer class="py-8 border-t border-gray-200 dark:border-darkBorder text-center bg-white/50 dark:bg-darkBg/50 mt-auto">
-            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
-                Developed by <span class="font-bold text-gray-800 dark:text-gray-200 tracking-wide">jaimin.web</span>
+        <footer>
+            <p class="footer-text">
+                Developed by <span class="footer-author">jaimin.web</span>
             </p>
         </footer>
     </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        // ---- 🚀 APPS SCRIPT URL YAHA DAALO ----
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXvvY3wlQ6sb7QOzQx9QQJTBu4RlKrF1acRDnvaDc7u68Tlf2QWk60C5ZcgZaalbUh/exec';
-        
-        // --- 0. Redirect Handling (Link pe click karne pe chalega) ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const shortId = urlParams.get('id');
-
-        if (shortId) {
-            // Agar URL me '?id=' hai, toh original website ko chupa do aur loading screen dikhao
-            document.getElementById('main-app').classList.add('hidden');
-            document.getElementById('redirect-overlay').classList.remove('hidden');
-            document.getElementById('redirect-overlay').classList.add('flex');
-
-            fetch(APPS_SCRIPT_URL + "?id=" + shortId)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.longUrl) {
-                        document.getElementById('redirect-msg').textContent = "Taking you there...";
-                        window.location.href = data.longUrl;
-                    } else {
-                        document.getElementById('redirect-spinner').classList.add('hidden');
-                        document.getElementById('redirect-msg').textContent = "404 - Link Not Found!";
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('redirect-spinner').classList.add('hidden');
-                    document.getElementById('redirect-msg').textContent = "Error loading link!";
-                });
-        }
-
-        // --- 1. Theme Management ---
-        const htmlElement = document.documentElement;
-        const themeToggleLight = document.getElementById('theme-toggle-light-icon');
-        const themeToggleDark = document.getElementById('theme-toggle-dark-icon');
-        const mobileThemeIcon = document.getElementById('mobile-theme-icon');
-
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            htmlElement.classList.add('dark');
-            themeToggleLight.classList.remove('hidden'); 
-            updateMobileIcon(true);
-        } else {
-            themeToggleDark.classList.remove('hidden');  
-            updateMobileIcon(false);
-        }
-
-        function updateMobileIcon(isDark) {
-            if(isDark) {
-                mobileThemeIcon.innerHTML = '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>';
-                mobileThemeIcon.classList.replace('text-gray-700', 'text-yellow-400');
-            } else {
-                mobileThemeIcon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>';
-                mobileThemeIcon.classList.replace('text-yellow-400', 'text-gray-700');
-            }
-        }
-
-        const toggleTheme = () => {
-            htmlElement.classList.toggle('dark');
-            const isDark = htmlElement.classList.contains('dark');
-            themeToggleDark.classList.toggle('hidden');
-            themeToggleLight.classList.toggle('hidden');
-            updateMobileIcon(isDark);
-            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
-        };
-
-        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-        document.getElementById('mobile-theme-toggle').addEventListener('click', toggleTheme);
-
-        // --- 2. Mobile Drawer Navigation ---
-        const menuBtn = document.getElementById('menu-btn');
-        const closeBtn = document.getElementById('close-drawer');
-        const drawer = document.getElementById('drawer');
-        const overlay = document.getElementById('drawer-overlay');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-
-        const toggleDrawer = () => {
-            drawer.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        };
-
-        menuBtn.addEventListener('click', toggleDrawer);
-        closeBtn.addEventListener('click', toggleDrawer);
-        overlay.addEventListener('click', toggleDrawer);
-        
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', toggleDrawer);
-        });
-
-        // --- 3. Animation Observer ---
-        const observerOptions = { root: null, rootMargin: '0px 0px -50px 0px', threshold: 0.1 };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); }});
-        }, observerOptions);
-        document.querySelectorAll('.reveal').forEach((el) => { observer.observe(el); });
-
-        // --- 4. Shorten Form Logic ---
-        const form = document.getElementById('shorten-form');
-        const urlInput = document.getElementById('long-url');
-        const submitBtn = document.getElementById('submit-btn');
-        const btnText = document.getElementById('btn-text');
-        const spinner = document.getElementById('loading-spinner');
-        const resultContainer = document.getElementById('result-container');
-        const shortUrlLink = document.getElementById('short-url-link');
-        const errorMessage = document.getElementById('error-message');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const longUrl = urlInput.value.trim();
-            if (!longUrl) return;
-
-            errorMessage.classList.add('hidden');
-            resultContainer.classList.add('hidden');
-            
-            urlInput.disabled = true;
-            submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
-            btnText.textContent = 'Saving...';
-            spinner.classList.remove('hidden');
-
-            try {
-                if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
-                    throw new Error("Dev Note: Add your Apps Script URL in the code.");
-                }
-
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ url: longUrl })
-                });
-
-                const data = await response.json();
-                
-                if (data.success === false) {
-                    throw new Error(data.message);
-                }
-                
-                // AUTOMATICALLY TUMHARA DOMAIN UTHAYEGA
-                const currentDomain = window.location.origin + window.location.pathname;
-                const finalShortUrl = currentDomain + "?id=" + data.shortCode;
-
-                shortUrlLink.href = finalShortUrl;
-                shortUrlLink.textContent = finalShortUrl;
-                resultContainer.classList.remove('hidden');
-                
-                btnText.textContent = 'Success!';
-                setTimeout(() => { resetButtonState(); }, 3000);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = error.message || "Network Error. Please try again.";
-                errorMessage.classList.remove('hidden');
-                resetButtonState(); 
-            } 
-        });
-
-        function resetButtonState() {
-            urlInput.disabled = false;
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
-            btnText.textContent = 'Shorten';
-            spinner.classList.add('hidden');
-            urlInput.value = ''; 
-        }
-
-        // --- 5. Clipboard Copy ---
-        const copyBtn = document.getElementById('copy-btn');
-        const copyText = document.getElementById('copy-text');
-        const copyIcon = document.getElementById('copy-icon');
-
-        copyBtn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(shortUrlLink.textContent);
-                copyBtn.classList.add('bg-green-100', 'text-green-700', 'dark:bg-green-900/40', 'dark:text-green-400');
-                copyText.textContent = 'Copied!';
-                copyIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
-                setTimeout(() => {
-                    copyBtn.classList.remove('bg-green-100', 'text-green-700', 'dark:bg-green-900/40', 'dark:text-green-400');
-                    copyText.textContent = 'Copy';
-                    copyIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>';
-                }, 2000);
-            } catch (err) { console.error('Copy failed', err); }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
