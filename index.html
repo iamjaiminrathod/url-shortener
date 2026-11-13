@@ -105,6 +105,22 @@
             </p>
         </footer>
     </div>
+    <script>
+        (function() {
+            const urlField = document.getElementById('long-url');
+            if (urlField) {
+                urlField.addEventListener('focus', () => {
+                    document.body.classList.add('keyboard-open');
+                    setTimeout(() => {
+                        urlField.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+                    }, 150);
+                });
+                urlField.addEventListener('blur', () => {
+                    document.body.classList.remove('keyboard-open'); 
+                });
+            }
+        })();
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
