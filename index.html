@@ -6,10 +6,14 @@
     <title>URL Shortener - jaimin.web</title>
     <link rel="icon" href="images/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <style>
+        * { -webkit-tap-highlight-color: transparent !important; }
+            button:focus, a:focus, input:focus { outline: none !important; }
+    </style>
 </head>
 <body>
 
-    <!--Redirecting Screen -->
+    <!-- Redirecting Screen -->
     <div id="redirect-overlay" class="hidden">
         <div id="redirect-spinner" class="redirect-spinner animate-spin"></div>
         <h2 id="redirect-msg">Fetching your link...</h2>
@@ -105,22 +109,6 @@
             </p>
         </footer>
     </div>
-    <script>
-        (function() {
-            const urlField = document.getElementById('long-url');
-            if (urlField) {
-                urlField.addEventListener('focus', () => {
-                    document.body.classList.add('keyboard-open');
-                    setTimeout(() => {
-                        urlField.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-                    }, 150);
-                });
-                urlField.addEventListener('blur', () => {
-                    document.body.classList.remove('keyboard-open'); 
-                });
-            }
-        })();
-    </script>
     <script src="script.js"></script>
 </body>
 </html>
